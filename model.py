@@ -30,8 +30,14 @@ def argsort(values):
 
     return idx
 
-# Step 3 - make_op_enums (not yet solved)
-# TODO: implement
+# Step 3 - make_op_enums
+def make_op_enums():
+    unaryOps = enum.Enum('UnaryOps', ['NEG', 'RELU', 'LOG', 'EXP', 'SQRT', 'SIGMOID'])
+    binaryOps = enum.Enum('BinaryOps', ['ADD', 'SUB', 'MUL', 'DIV', 'CMPLT', 'MAX'])
+    reduceOps = enum.Enum('ReduceOps', ['SUM', 'MAX'])
+    movementOps = enum.Enum('MovementOps', ['RESHAPE', 'EXPAND', 'PERMUTE'])
+
+    return (unaryOps, binaryOps, reduceOps, movementOps)
 
 # Step 4 - LazyBuffer (not yet solved)
 # TODO: implement
