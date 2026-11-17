@@ -13,8 +13,22 @@ def prod(shape):
         result *= dimension
     return result
 
-# Step 2 - argsort (not yet solved)
-# TODO: implement
+# Step 2 - argsort
+from functools import cmp_to_key
+
+def argsort(values):
+    idx = list(range(len(values)))
+
+    def compare(a, b):
+        if values[a] < values[b]:
+            return -1
+        elif values[a] > values[b]:
+            return 1
+        return 0
+
+    idx.sort(key=cmp_to_key(compare))
+
+    return idx
 
 # Step 3 - make_op_enums (not yet solved)
 # TODO: implement
