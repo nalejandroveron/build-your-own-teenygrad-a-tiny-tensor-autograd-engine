@@ -89,8 +89,26 @@ def e(self, op):
 
 LazyBuffer.e = e
 
-# Step 8 - lazybuffer_binary_e (not yet solved)
-# TODO: implement
+# Step 8 - lazybuffer_binary_e
+def lazybuffer_binary_e(self, op, other):
+    x = self._np
+    y = other._np
+    if op.name == 'ADD':
+        out = x + y
+    elif op.name == 'SUB':
+        out = x - y
+    elif op.name == 'MUL':
+        out = x * y
+    elif op.name == 'DIV':
+        out = x / y
+    elif op.name == 'CMPLT':
+        out = (x < y).astype(a.dtype)
+    elif op.name == 'MAX':
+        out = np.maximum(x, y)
+    else:
+        raise ValueError(f"Invalid operation: {op.name}")
+    
+    return LazyBuffer(out)
 
 # Step 9 - lazybuffer_r (not yet solved)
 # TODO: implement
