@@ -31,6 +31,8 @@ def argsort(values):
     return idx
 
 # Step 3 - make_op_enums
+import enum
+
 def make_op_enums():
     unaryOps = enum.Enum('UnaryOps', ['NEG', 'RELU', 'LOG', 'EXP', 'SQRT', 'SIGMOID'])
     binaryOps = enum.Enum('BinaryOps', ['ADD', 'SUB', 'MUL', 'DIV', 'CMPLT', 'MAX'])
@@ -64,8 +66,28 @@ def rand(shape, seed=None):
     data = rng.random(shape).astype(np.float32)
     return LazyBuffer(data)
 
-# Step 7 - lazybuffer_unary_e (not yet solved)
-# TODO: implement
+# Step 7 - lazybuffer_unary_e
+def e(self, op):
+    x = self._np
+    if op.name == 'NEG':
+        out = -x
+    elif op.name == 'RELU':
+        out = np.maximum(x, 0)
+    elif op.name == 'LOG':
+        out = np.log(x)
+    elif op.name == 'EXP':
+        out = np.exp(x)
+    elif op.name == 'SQRT':
+        out = np.sqrt(x)
+    elif op.name == 'SIGMOID':
+        out = 1.0 / (1.0 + np.exp(-x))
+    else:
+        raise ValueError(f"Invalid operation: {op.name}")
+    
+    return LazyBuffer(out)
+
+
+LazyBuffer.e = e
 
 # Step 8 - lazybuffer_binary_e (not yet solved)
 # TODO: implement
