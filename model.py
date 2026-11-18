@@ -286,8 +286,20 @@ class Sub(Function):
         gy = g.e(UnaryOps.NEG) if self.needs_input_grad[1] else None
         return (gx, gy)
 
-# Step 24 - Mul (not yet solved)
-# TODO: implement
+# Step 24 - Mul
+class Mul(Function):
+    def forward(self, x, y):
+        _, BinaryOps, _, _ = make_op_enums()
+        self.x = x
+        self.y = y
+
+        return lazybuffer_binary_e(x, BinaryOps.MUL, y)
+
+    def backward(self, grad_output):
+        _, BinaryOps, _, _ = make_op_enums()
+        gx = lazybuffer_binary_e(self.y, BinaryOps.MUL, grad_output) if self.needs_input_grad[0] else None
+        gy = lazybuffer_binary_e(self.x, BinaryOps.MUL, grad_output) if self.needs_input_grad[1] else None
+        return (gx, gy)
 
 # Step 25 - Div (not yet solved)
 # TODO: implement
