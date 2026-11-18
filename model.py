@@ -133,8 +133,20 @@ def expand(self, new_shape):
 def permute(self, order):
     return LazyBuffer(self._np.transpose(order))
 
-# Step 13 - Function (not yet solved)
-# TODO: implement
+# Step 13 - Function
+class Function:
+    def __init__(self, *tensors):
+        flags = [t.requires_grad for t in tensors]
+        self.needs_input_grad = flags
+        if any(f is True for f in flags):
+            self.requires_grad = True
+        elif None in flags:
+            self.requires_grad = None
+        else:
+            self.requires_grad = False
+
+        if self.requires_grad is True:
+            self.parents = tensors
 
 # Step 14 - function_forward_backward_stubs (not yet solved)
 # TODO: implement
