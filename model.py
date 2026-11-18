@@ -104,7 +104,7 @@ def lazybuffer_binary_e(self, op, other):
     elif op.name == 'DIV':
         out = x / y
     elif op.name == 'CMPLT':
-        out = (x < y).astype(a.dtype)
+        out = (x < y).astype(x.dtype)
     elif op.name == 'MAX':
         out = np.maximum(x, y)
     else:
@@ -191,8 +191,18 @@ class Neg(Function):
     def backward(self, grad_output):
         return LazyBuffer(-grad_output._np)
 
-# Step 17 - Relu (not yet solved)
-# TODO: implement
+# Step 17 - Relu
+class Relu(Function):
+    def forward(self, x):
+        UnaryOps, *_ = make_op_enums()
+        self.ret = x.e(UnaryOps.RELU)
+        return self.ret
+
+    def backward(self, grad_output):
+        _, BinaryOps, *_ = make_op_enums()
+        zero = LazyBuffer.const(0, self.ret.shape)
+        mask = lazybuffer_binary_e(zero, BinaryOps.CMPLT, self.ret)
+        return lazybuffer_binary_e(grad_output, BinaryOps.MUL, mask)
 
 # Step 18 - Log (not yet solved)
 # TODO: implement
