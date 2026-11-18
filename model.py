@@ -123,8 +123,11 @@ def r(self, op, axis):
 def reshape(self, new_shape):
     return LazyBuffer(self._np.reshape(new_shape))
 
-# Step 11 - lazybuffer_expand (not yet solved)
-# TODO: implement
+# Step 11 - lazybuffer_expand
+def expand(self, new_shape):
+    new_shape = tuple(int(d) for d in new_shape)
+
+    return LazyBuffer(np.array(np.broadcast_to(self._np, new_shape)))
 
 # Step 12 - lazybuffer_permute (not yet solved)
 # TODO: implement
