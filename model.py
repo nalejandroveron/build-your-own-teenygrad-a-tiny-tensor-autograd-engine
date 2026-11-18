@@ -381,8 +381,22 @@ def expand_function_forward(ctx, x, shape):
     out = np.broadcast_to(x._np, new_shape)
     return LazyBuffer(np.ascontiguousarray(out))
 
-# Step 32 - expand_function_backward (not yet solved)
-# TODO: implement
+# Step 32 - expand_function_backward
+def expand_function_backward(ctx, grad_output):
+    input_shape = ctx.input_shape
+    grad_shape = grad_output.shape
+    
+    # 1. Find the axes that were broadcasted (size was 1, now larger)
+    axes = tuple(i for i in range(len(input_shape)) 
+                 if input_shape[i] == 1 and grad_shape[i] != 1)
+    
+    # 2. Perform the reduction using numpy on the underlying buffer array, keeping dimensions
+    np_grad = grad_output._np
+    if axes:
+        np_grad = np_grad.sum(axis=axes, keepdims=True)
+        
+    # 3. Reshape back to the exact input shape and wrap in a LazyBuffer
+    return LazyBuffer(np_grad.reshape(input_shape))
 
 # Step 33 - permute_function_forward_backward (not yet solved)
 # TODO: implement
