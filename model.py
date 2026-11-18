@@ -49,7 +49,7 @@ class LazyBuffer:
         self.dtype = self._np.dtype
 
     def __array__(self):
-        return np.asarray(self,_np, dtype=dtype)
+        return np.asarray(self._np, dtype=dtype)
     
     def __float__(self):
         float(self._np)
@@ -181,8 +181,13 @@ for _obj in list(globals().values()):
             if _k.__name__ == 'Function':
                 _k.apply = apply
 
-# Step 16 - Neg (not yet solved)
-# TODO: implement
+# Step 16 - Neg
+class Neg(Function):
+    def forward(self, x):
+        return LazyBuffer(-x._np)
+
+    def backward(self, grad_output):
+        return LazyBuffer(-grad_output._np)
 
 # Step 17 - Relu (not yet solved)
 # TODO: implement
