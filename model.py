@@ -301,8 +301,26 @@ class Mul(Function):
         gy = lazybuffer_binary_e(self.x, BinaryOps.MUL, grad_output) if self.needs_input_grad[1] else None
         return (gx, gy)
 
-# Step 25 - Div (not yet solved)
-# TODO: implement
+# Step 25 - Div
+class Div(Function):
+    def forward(self, x, y):
+        self.x = x
+        self.y = y
+
+        _, BinaryOps, _, _ = make_op_enums()
+        return lazybuffer_binary_e(x, BinaryOps.DIV, y)
+
+    def backward(self, grad_output):
+        grad_x = None
+        grad_y = None
+
+        if self.needs_input_grad[0] is True:
+            grad_x = LazyBuffer(grad_output._np / self.y._np)
+
+        if self.needs_input_grad[1] is True:
+            grad_y = LazyBuffer(-grad_output._np * self.x._np / (self.y._np ** 2))
+
+        return (grad_x, grad_y)
 
 # Step 26 - sum_function_forward (not yet solved)
 # TODO: implement
