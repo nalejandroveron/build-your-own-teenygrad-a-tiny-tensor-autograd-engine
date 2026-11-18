@@ -374,8 +374,12 @@ class Reshape(Function):
     def backward(self, grad_output):
         return LazyBuffer(grad_output._np.reshape(self.input_shape))
 
-# Step 31 - expand_function_forward (not yet solved)
-# TODO: implement
+# Step 31 - expand_function_forward
+def expand_function_forward(ctx, x, shape):
+    ctx.input_shape = x.shape
+    new_shape = tuple(int(d) for d in shape)
+    out = np.broadcast_to(x._np, new_shape)
+    return LazyBuffer(np.ascontiguousarray(out))
 
 # Step 32 - expand_function_backward (not yet solved)
 # TODO: implement
