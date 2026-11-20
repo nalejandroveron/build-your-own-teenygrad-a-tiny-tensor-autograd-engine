@@ -444,8 +444,13 @@ class Tensor:
     def numpy(self):
         return self.lazydata._np
 
-# Step 35 - tensor_from_data (not yet solved)
-# TODO: implement
+# Step 35 - tensor_from_data
+def tensor_from_data(data, requires_grad=False):
+    if isinstance(data, LazyBuffer):
+        buf = data
+    else:
+        buf = LazyBuffer(np.asarray(data, dtype=np.float32))
+    return Tensor(buf, requires_grad=requires_grad)
 
 # Step 36 - tensor_creation_helpers (not yet solved)
 # TODO: implement
