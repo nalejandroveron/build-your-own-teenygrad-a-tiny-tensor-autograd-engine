@@ -546,8 +546,32 @@ def bind_unary_tensor_methods():
         "sigmoid": _make(Sigmoid),
     }
 
-# Step 41 - broadcasted (not yet solved)
-# TODO: implement
+# Step 41 - broadcasted
+import numpy as np
+
+
+def broadcasted(x, y):
+  bx_arr, by_arr = np.broadcast_arrays(x.data._np, y.data._np)
+  target_shape = bx_arr.shape
+
+  out_x = (
+      x
+      if x.shape == target_shape
+      else tensor_from_data(
+          np.array(bx_arr, dtype=np.float32),
+          requires_grad=getattr(x, "requires_grad", False),
+      )
+  )
+  out_y = (
+      y
+      if y.shape == target_shape
+      else tensor_from_data(
+          np.array(by_arr, dtype=np.float32),
+          requires_grad=getattr(y, "requires_grad", False),
+      )
+  )
+
+  return out_x, out_y
 
 # Step 42 - bind_binary_tensor_methods (not yet solved)
 # TODO: implement
