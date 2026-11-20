@@ -530,8 +530,21 @@ def tensor_backward(tensor):
             else:
                 parent.grad = Tensor(LazyBuffer(parent.grad.data._np + g._np))
 
-# Step 40 - bind_unary_tensor_methods (not yet solved)
-# TODO: implement
+# Step 40 - bind_unary_tensor_methods
+def bind_unary_tensor_methods():
+    def _make(fn_cls):
+        def method(t):
+            return fn_cls.apply(t)
+        return method
+
+    return {
+        "neg": _make(Neg),
+        "relu": _make(Relu),
+        "log": _make(Log),
+        "exp": _make(Exp),
+        "sqrt": _make(Sqrt),
+        "sigmoid": _make(Sigmoid),
+    }
 
 # Step 41 - broadcasted (not yet solved)
 # TODO: implement
