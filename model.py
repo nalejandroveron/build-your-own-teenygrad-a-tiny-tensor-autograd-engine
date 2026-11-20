@@ -452,8 +452,19 @@ def tensor_from_data(data, requires_grad=False):
         buf = LazyBuffer(np.asarray(data, dtype=np.float32))
     return Tensor(buf, requires_grad=requires_grad)
 
-# Step 36 - tensor_creation_helpers (not yet solved)
-# TODO: implement
+# Step 36 - tensor_creation_helpers
+def tensor_creation_helpers():
+    return (zeros_fn, ones_fn, full_fn)
+
+def zeros_fn(shape):
+    return full_fn(shape, 0)
+
+def ones_fn(shape):
+    return full_fn(shape, 1)
+
+def full_fn(shape, value):
+    arr = np.full(shape, value, dtype=np.float32)
+    return Tensor(LazyBuffer(arr))
 
 # Step 37 - tensor_randn (not yet solved)
 # TODO: implement
