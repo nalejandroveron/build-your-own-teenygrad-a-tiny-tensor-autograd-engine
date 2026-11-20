@@ -412,10 +412,10 @@ def permute_function_forward_backward():
 
 # Step 34 - Tensor
 class Tensor:
-    def __init__(self, data, requires_grad=False):
+    def __init__(self, data, requires_grad=False, _ctx=None):
         # TODO: wrap data in a LazyBuffer and store grad/ctx bookkeeping
         self.requires_grad = requires_grad
-        self._ctx = None
+        self._ctx = _ctx
         self.grad = None
 
         if isinstance(data, LazyBuffer):
@@ -482,8 +482,24 @@ def tensor_randn(shape, seed=None, requires_grad=False):
 
     return Tensor(LazyBuffer(z), requires_grad=requires_grad)
 
-# Step 38 - build_topological_order (not yet solved)
-# TODO: implement
+# Step 38 - build_topological_order
+def build_topological_order(tensor):
+    visited = set()
+    order = []
+
+    def dfs(node):
+        if id(node) in visited:
+            return
+        visited.add(id(node))
+        if node._ctx is not None:
+            for parent in node._ctx.parents:
+                if id(parent) not in visited:
+                    dfs(parent)
+        order.append(node)
+
+    if tensor is not None:
+        dfs(tensor)
+    return order
 
 # Step 39 - tensor_backward (not yet solved)
 # TODO: implement
