@@ -638,8 +638,48 @@ def bind_movement_tensor_methods():
         "permute": permute,
     }
 
-# Step 44 - bind_reduce_tensor_methods (not yet solved)
-# TODO: implement
+# Step 44 - bind_reduce_tensor_methods
+def bind_reduce_tensor_methods():
+    def _normalize_axes(ndim, axis):
+        if axis is None:
+            return tuple(range(ndim))
+        if isinstance(axis, int):
+            axes = (axis,)
+        else:
+            axes = tuple(axis)
+        normalized = []
+        for ax in axes:
+            idx = ax + ndim if ax < 0 else ax
+            if idx < 0 or idx >= ndim:
+                raise IndexError(f"Axis {ax} out of bounds for tensor with {ndim} dimensions")
+            if idx not in normalized:
+                normalized.append(idx)
+        return tuple(sorted(normalized))
+
+    def _drop_axes(shape, reduced_axes):
+        reduced_set = set(reduced_axes)
+        out_shape = tuple(dim for i, dim in enumerate(shape) if i not in reduced_set)
+        return out_shape if out_shape else ()
+
+    def sum(self, axis=None, keepdim=False):
+        ndim = len(self.shape)
+        axes = _normalize_axes(ndim, axis)
+        out = Sum.apply(self, axis=axes)
+        if not keepdim:
+            out = Reshape.apply(out, shape=_drop_axes(out.shape, axes))
+        return out
+
+    def max(self, axis=None, keepdim=False):
+        ndim = len(self.shape)
+        axes = _normalize_axes(ndim, axis)
+        out = Max.apply(self, axis=axes)
+        if not keepdim:
+            out = Reshape.apply(out, shape=_drop_axes(out.shape, axes))
+        return out
+
+    Tensor.sum = sum
+    Tensor.max = max
+    return {"sum": sum, "max": max}
 
 # Step 45 - tensor_mean (not yet solved)
 # TODO: implement
