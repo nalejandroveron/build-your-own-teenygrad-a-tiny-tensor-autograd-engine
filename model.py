@@ -466,8 +466,21 @@ def full_fn(shape, value):
     arr = np.full(shape, value, dtype=np.float32)
     return Tensor(LazyBuffer(arr))
 
-# Step 37 - tensor_randn (not yet solved)
-# TODO: implement
+# Step 37 - tensor_randn
+def tensor_randn(shape, seed=None, requires_grad=False):
+    if isinstance(shape, int):
+        shape = (shape,)
+    else:
+        shape = tuple(shape)
+
+    rng = np.random.RandomState(seed)
+    u = rng.rand(2, *shape)
+    u1, u2 = u[0], u[1]
+
+    u1 = np.clip(u1, 1e-12, 1.0)
+    z = (np.sqrt(-2.0 * np.log(u1)) * np.cos(2.0 * np.pi * u2)).astype(np.float32)
+
+    return Tensor(LazyBuffer(z), requires_grad=requires_grad)
 
 # Step 38 - build_topological_order (not yet solved)
 # TODO: implement
