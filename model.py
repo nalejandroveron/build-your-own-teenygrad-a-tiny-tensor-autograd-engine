@@ -601,8 +601,42 @@ def bind_binary_tensor_methods():
   Tensor.__mul__ = mul
   Tensor.__truediv__ = div
 
-# Step 43 - bind_movement_tensor_methods (not yet solved)
-# TODO: implement
+# Step 43 - bind_movement_tensor_methods
+# ── Step 043  bind_movement_tensor_methods ──
+def bind_movement_tensor_methods():
+    class Expand(Function):
+        def forward(self, x, shape):
+            return expand_function_forward(self, x, shape)
+
+        def backward(self, grad_output):
+            return expand_function_backward(self, grad_output)
+
+    class Permute(Function):
+        _fwd, _bwd = permute_function_forward_backward()
+
+        def forward(self, x, order):
+            return Permute._fwd(self, x, order)
+
+        def backward(self, grad_output):
+            return Permute._bwd(self, grad_output)
+
+    def reshape(self, *args):
+        shape = args[0] if len(args) == 1 and isinstance(args[0], (tuple, list)) else args
+        return Reshape.apply(self, shape=shape)
+
+    def expand(self, *args):
+        shape = args[0] if len(args) == 1 and isinstance(args[0], (tuple, list)) else args
+        return Expand.apply(self, shape=shape)
+
+    def permute(self, *args):
+        order = args[0] if len(args) == 1 and isinstance(args[0], (tuple, list)) else args
+        return Permute.apply(self, order=order)
+
+    return {
+        "reshape": reshape,
+        "expand": expand,
+        "permute": permute,
+    }
 
 # Step 44 - bind_reduce_tensor_methods (not yet solved)
 # TODO: implement
